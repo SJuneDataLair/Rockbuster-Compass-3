@@ -1,0 +1,37 @@
+A CTE created using SQL to identify the top 5 customers across all regions
+
+WITH top_5_customers_cte (Customer_id,first_name,last_name,city,country) AS
+(SELECT A.customer_id,
+B.first_name,
+B.last_name,
+D.city,
+E.country,
+SUM (A.amount) AS total_amount_paid
+FROM payment A
+INNER JOIN customer B on A.customer_id=B.customer_id
+INNER JOIN address C on B.address_id=C.address_id
+INNER JOIN city D on C.city_id=D.city_id
+INNTER JOIN country E on D.country_id=E.country_id
+WHERE city= 'Aurora' or city= 'Acus' or city= 'Citrust Heights'
+or city= 'Iwaki' or city= 'Ambattur' or city= 'Shanwei'
+or city= 'So Leopoldo' or city= 'Teboksary' or city= 'Tianjin'
+or city= 'Cianjur'
+GROUP BY A.customer_id,
+B.first_name,
+B.last_name,
+D.city,
+E.country,
+ORDER BY total_amount_paid DESC
+LIMIT 5)
+SELECT E.country, 
+COUNT (DISTINCT A.customer_id) AS all_customers_count,
+COUNT(top_5_customers_Cte) AS top_customers
+FROM customer A
+INNER JOIN customer B on A.customer_id=B.customer_id
+INNER JOIN address C ON B.address_id=C.address_id
+INNER JOIN city D on C.city_id=D.city_id
+INNER JOIN country E ON D.country_id= E.country_id
+LEFT JOIN top_5_customers_cte_ ON A.customer_id=B.customer_id
+GROUP BY E.country
+ORDER BY all_customers_count DESC
+LIMIT 5;
